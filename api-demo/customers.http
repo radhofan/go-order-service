@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:8080
+
+### 1. Create Customer (Success -> 201 Created)
+POST {{baseUrl}}/customers
+Content-Type: application/json
+
+{
+  "name": "Budi Santoso",
+  "email": "budi.santoso@example.com"
+}
+
+### 2. Create Second Customer (Success -> 201 Created)
+POST {{baseUrl}}/customers
+Content-Type: application/json
+
+{
+  "name": "Siti Rahma",
+  "email": "siti.rahma@example.com"
+}
+
+### 3. Create Customer Duplicate Email (Error -> 409 Conflict)
+POST {{baseUrl}}/customers
+Content-Type: application/json
+
+{
+  "name": "Budi Duplicate",
+  "email": "budi.santoso@example.com"
+}
+
+### 4. Create Customer Invalid Email Format (Error -> 400 Bad Request)
+POST {{baseUrl}}/customers
+Content-Type: application/json
+
+{
+  "name": "Invalid Email User",
+  "email": "not-an-email"
+}

@@ -1,0 +1,24 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+server
+
+# Environment variables
+.env
+*.env
+
+# Data and SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+clientstore
+
+# IDEs and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

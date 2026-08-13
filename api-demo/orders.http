@@ -1,0 +1,114 @@
+@baseUrl = http://localhost:8080
+
+### 1. Create Order (Success -> 201 Created)
+# Server automatically computes price_at_order and total_amount
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer_id": 1,
+  "items": [
+    { "product_id": 1, "qty": 2 },
+    { "product_id": 2, "qty": 1 }
+  ]
+}
+
+### 2. Create Order Fails - Insufficient Stock (Error -> 400 Bad Request)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer_id": 1,
+  "items": [
+    { "product_id": 1, "qty": 9999 }
+  ]
+}
+
+### 3. Create Order Fails - Customer Not Found (Error -> 404 Not Found)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer_id": 99999,
+  "items": [
+    { "product_id": 1, "qty": 1 }
+  ]
+}
+
+### 4. Create Order Fails - Product Not Found (Error -> 404 Not Found)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer_id": 1,
+  "items": [
+    { "product_id": 99999, "qty": 1 }
+  ]
+}
+
+### 5. Get Order Detail by ID
+GET {{baseUrl}}/orders/1
+
+### 6. Get Order Detail Not Found (Error -> 404 Not Found)
+GET {{baseUrl}}/orders/99999
+
+### 7. List All Orders
+GET {{baseUrl}}/orders
+
+### 8. List Orders Filtered by Customer ID (?customer_id=1)
+GET {{baseUrl}}/orders?customer_id=1
+
+### 9. List Orders Filtered by Status (?status=PENDING)
+GET {{baseUrl}}/orders?status=PENDING
+
+### 10. Update Order Status PENDING -> PAID (Success -> 200 OK)
+PATCH {{baseUrl}}/orders/1/status
+Content-Type: application/json
+
+{
+  "status": "PAID"
+}
+
+### 11. Update Order Status PAID -> SHIPPED (Success -> 200 OK)
+PATCH {{baseUrl}}/orders/1/status
+Content-Type: application/json
+
+{
+  "status": "SHIPPED"
+}
+
+### 12. Update Order Status SHIPPED -> COMPLETED (Success -> 200 OK)
+PATCH {{baseUrl}}/orders/1/status
+Content-Type: application/json
+
+{
+  "status": "COMPLETED"
+}
+
+### 13. Create New Order to Test Cancellation
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer_id": 1,
+  "items": [
+    { "product_id": 1, "qty": 3 }
+  ]
+}
+
+### 14. Cancel Order PENDING -> CANCELLED (Restores Item Stock Atomically)
+PATCH {{baseUrl}}/orders/2/status
+Content-Type: application/json
+
+{
+  "status": "CANCELLED"
+}
+
+### 15. Invalid Status Transition (Error -> 409 Conflict)
+# Attempting to transition completed order #1 to PAID
+PATCH {{baseUrl}}/orders/1/status
+Content-Type: application/json
+
+{
+  "status": "PAID"
+}

@@ -1,0 +1,67 @@
+@baseUrl = http://localhost:8080
+
+### 1. Create Product (Success -> 201 Created)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "sku": "KAOS-01",
+  "name": "Kaos Polos Hitam XL",
+  "price": 85000,
+  "stock": 20
+}
+
+### 2. Create Another Product (Success -> 201 Created)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "sku": "HOODIE-01",
+  "name": "Hoodie Oversized Grey",
+  "price": 250000,
+  "stock": 10
+}
+
+### 3. Create Product Duplicate SKU (Error -> 409 Conflict)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "sku": "KAOS-01",
+  "name": "Kaos Polos Putih",
+  "price": 85000,
+  "stock": 15
+}
+
+### 4. Create Product Invalid Validation (Error -> 400 Bad Request)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "sku": "KAOS-02",
+  "name": "Kaos Navy",
+  "price": -10000,
+  "stock": 5
+}
+
+### 5. List Products with Pagination (?page=1&limit=10)
+GET {{baseUrl}}/products?page=1&limit=10
+
+### 6. Search Products by Name (?q=kaos)
+GET {{baseUrl}}/products?q=kaos
+
+### 7. Get Product Detail by ID
+GET {{baseUrl}}/products/1
+
+### 8. Get Product Detail Not Found (Error -> 404 Not Found)
+GET {{baseUrl}}/products/99999
+
+### 9. Update Product
+PUT {{baseUrl}}/products/1
+Content-Type: application/json
+
+{
+  "name": "Kaos Polos Hitam Premium",
+  "price": 95000,
+  "stock": 25
+}
