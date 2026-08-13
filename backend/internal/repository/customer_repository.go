@@ -12,7 +12,6 @@ import (
 type CustomerRepository interface {
 	Create(ctx context.Context, c *domain.Customer) error
 	GetByID(ctx context.Context, id int64) (*domain.Customer, error)
-	GetByEmail(ctx context.Context, email string) (*domain.Customer, error)
 }
 
 type sqliteCustomerRepository struct {
@@ -39,19 +38,6 @@ func (r *sqliteCustomerRepository) GetByID(ctx context.Context, id int64) (*doma
 	query := `SELECT id, name, email, created_at FROM customers WHERE id = ?`
 	c := &domain.Customer{}
 	err := r.db.QueryRowContext(ctx, query, id).Scan(&c.ID, &c.Name, &c.Email, &c.CreatedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return c, nil
-}
-
-func (r *sqliteCustomerRepository) GetByEmail(ctx context.Context, email string) (*domain.Customer, error) {
-	query := `SELECT id, name, email, created_at FROM customers WHERE email = ?`
-	c := &domain.Customer{}
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&c.ID, &c.Name, &c.Email, &c.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

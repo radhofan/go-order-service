@@ -12,7 +12,6 @@ import (
 type ProductRepository interface {
 	Create(ctx context.Context, p *domain.Product) error
 	GetByID(ctx context.Context, id int64) (*domain.Product, error)
-	GetBySKU(ctx context.Context, sku string) (*domain.Product, error)
 	Update(ctx context.Context, p *domain.Product) error
 	List(ctx context.Context, page, limit int, q string) ([]domain.Product, int64, error)
 	DeductStockTx(ctx context.Context, tx *sql.Tx, id int64, qty int) error
@@ -43,19 +42,6 @@ func (r *sqliteProductRepository) GetByID(ctx context.Context, id int64) (*domai
 	query := `SELECT id, sku, name, price, stock, created_at FROM products WHERE id = ?`
 	p := &domain.Product{}
 	err := r.db.QueryRowContext(ctx, query, id).Scan(&p.ID, &p.SKU, &p.Name, &p.Price, &p.Stock, &p.CreatedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return p, nil
-}
-
-func (r *sqliteProductRepository) GetBySKU(ctx context.Context, sku string) (*domain.Product, error) {
-	query := `SELECT id, sku, name, price, stock, created_at FROM products WHERE sku = ?`
-	p := &domain.Product{}
-	err := r.db.QueryRowContext(ctx, query, sku).Scan(&p.ID, &p.SKU, &p.Name, &p.Price, &p.Stock, &p.CreatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

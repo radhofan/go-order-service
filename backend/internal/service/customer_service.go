@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"net/mail"
 	"strings"
 
@@ -12,7 +11,6 @@ import (
 
 type CustomerService interface {
 	Create(ctx context.Context, req domain.CreateCustomerRequest) (*domain.Customer, error)
-	GetByID(ctx context.Context, id int64) (*domain.Customer, error)
 }
 
 type customerService struct {
@@ -47,19 +45,5 @@ func (s *customerService) Create(ctx context.Context, req domain.CreateCustomerR
 		return nil, err
 	}
 
-	return customer, nil
-}
-
-func (s *customerService) GetByID(ctx context.Context, id int64) (*domain.Customer, error) {
-	if id <= 0 {
-		return nil, domain.NewBadRequestError("invalid request", "id must be positive")
-	}
-	customer, err := s.customerRepo.GetByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	if customer == nil {
-		return nil, domain.NewNotFoundError("customer not found", fmt.Sprintf("customer with id %d does not exist", id))
-	}
 	return customer, nil
 }
